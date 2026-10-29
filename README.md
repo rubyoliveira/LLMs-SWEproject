@@ -1,1 +1,1 @@
-# RocketRewards: Joshua Thirumalai, Ruby Oliveira, Beningo Rodriguez
+# RocketRewards: Joshua Thirumalai, Ruby Oliveira, Beningno Rodriguez
