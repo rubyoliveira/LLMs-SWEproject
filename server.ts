@@ -6,6 +6,10 @@ import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { GoogleGenAI } from '@google/genai';
 import { validateCardQuery } from './src/utils/cardQueryValidator.ts';
+import { exec } from 'child_process';
+import util from 'util';
+
+const execPromise = util.promisify(exec);
 
 dotenv.config();
 
@@ -163,6 +167,70 @@ app.post('/api/config/key', async (req: Request, res: Response) => {
     return res.status(400).json({
       success: false,
       error: `Gemini verification failed: ${errorMsg}`,
+    });
+  }
+});
+
+// API: Git Repository status
+app.get('/api/github/status', async (_req: Request, res: Response) => {
+  try {
+    const { stdout: branch } = await execPromise('git branch --show-current');
+    const { stdout: log } = await execPromise('git log -n 3 --oneline');
+    const { stdout: remote } = await execPromise('git remote get-url origin');
+    return res.json({
+      branch: branch.trim(),
+      remote: remote.trim(),
+      recentCommits: log.trim().split('\n'),
+      targetRepo: 'https://github.com/rubyoliveira/LLMs-SWEproject',
+    });
+  } catch (err: any) {
+    return res.json({
+      branch: 'main',
+      remote: 'https://github.com/rubyoliveira/LLMs-SWEproject.git',
+      targetRepo: 'https://github.com/rubyoliveira/LLMs-SWEproject',
+      error: err.message,
+    });
+  }
+});
+
+// API: Push to GitHub using Personal Access Token
+app.post('/api/github/push', async (req: Request, res: Response) => {
+  const { token, repoUrl = 'https://github.com/rubyoliveira/LLMs-SWEproject.git' } = req.body;
+
+  if (!token || typeof token !== 'string' || !token.trim()) {
+    return res.status(400).json({
+      success: false,
+      error: 'GitHub Personal Access Token (PAT) is required to push to https://github.com/rubyoliveira/LLMs-SWEproject',
+    });
+  }
+
+  const cleanToken = token.trim();
+  // Strip protocol and credentials
+  const cleanRepo = repoUrl.replace(/^https?:\/\//, '').replace(/^.*@/, '');
+  const authRemoteUrl = `https://${cleanToken}@${cleanRepo}`;
+
+  try {
+    // Ensure git author is configured
+    await execPromise('git config user.name "Joshua Thirumalai" && git config user.email "Joshua.Thirumalai@gmail.com"');
+    await execPromise('git add .');
+    try {
+      await execPromise('git commit -m "feat: RocketRewards AI Financial Copilot and 1,000-scenario stress test suite"');
+    } catch {
+      // Nothing new to commit
+    }
+
+    const { stdout, stderr } = await execPromise(`git push ${authRemoteUrl} main`);
+
+    return res.json({
+      success: true,
+      message: 'Successfully pushed code to https://github.com/rubyoliveira/LLMs-SWEproject (branch: main)!',
+      details: stdout || stderr || 'Pushed successfully',
+    });
+  } catch (err: any) {
+    const errMsg = err?.stderr || err?.message || 'Git push encountered an error';
+    return res.status(500).json({
+      success: false,
+      error: `Failed to push to GitHub: ${errMsg}`,
     });
   }
 });
