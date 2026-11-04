@@ -1,0 +1,16 @@
+{
+  "short_name": "RocketRewards",
+  "name": "RocketRewards: The AI Financial & Card Copilot",
+  "description": "Autonomous credit rewards optimizer and debit-style debt guardrail with Notion sans styling.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f7f6f4",
+  "theme_color": "#74455d",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ]
+}

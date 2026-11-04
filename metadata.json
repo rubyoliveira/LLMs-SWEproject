@@ -1,0 +1,6 @@
+{
+  "name": "RocketRewards",
+  "description": "Smart credit card optimizer, safe-spend advisor, and wallet management with Notion sans typography and muted plum styling.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
