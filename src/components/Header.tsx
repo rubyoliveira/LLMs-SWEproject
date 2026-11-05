@@ -12,6 +12,7 @@ import {
   BookOpen,
   Laptop,
   Share2,
+  Terminal,
 } from 'lucide-react';
 import { AppMode } from '../types';
 
@@ -31,6 +32,7 @@ interface HeaderProps {
   onOpenStressTest: () => void;
   activeCardsCount: number;
   onOpenCardMatcher?: () => void;
+  onOpenTddTests?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -49,6 +51,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenStressTest,
   activeCardsCount,
   onOpenCardMatcher,
+  onOpenTddTests,
 }) => {
   return (
     <header className="w-full bg-[#f7f6f4] dark:bg-[#171718] border-b border-[#e9e6e2] dark:border-[#272629] sticky top-0 z-30 transition-colors">
@@ -119,6 +122,19 @@ export const Header: React.FC<HeaderProps> = ({
             <Zap className="w-3.5 h-3.5 fill-current" />
             <span>1,000 Stress Test</span>
           </button>
+
+          {/* 28 TDD Unit Tests Button */}
+          {onOpenTddTests && (
+            <button
+              type="button"
+              onClick={onOpenTddTests}
+              title="Run 28 TDD Unit Assertions (Red & Green Phase Verification)"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold text-indigo-700 dark:text-indigo-300 bg-indigo-500/15 hover:bg-indigo-500/25 dark:bg-indigo-500/20 dark:hover:bg-indigo-500/30 rounded-lg transition-colors cursor-pointer shadow-2xs border border-indigo-500/20"
+            >
+              <Terminal className="w-3.5 h-3.5" />
+              <span>28 Tests</span>
+            </button>
+          )}
 
           {/* Upload Cards Button (Enforces user's own cards) */}
           <button

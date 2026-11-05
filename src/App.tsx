@@ -16,6 +16,7 @@ import { ResearchPaperModal } from './components/ResearchPaperModal';
 import { ShareModal } from './components/ShareModal';
 import { StressTestModal } from './components/StressTestModal';
 import { CardMatcherModal } from './components/CardMatcherModal';
+import { TddTestModal } from './components/TddTestModal';
 import { Toast } from './components/Toast';
 import {
   AppMode,
@@ -96,6 +97,7 @@ export default function App() {
   const [isShareOpen, setIsShareOpen] = useState<boolean>(false);
   const [isStressTestOpen, setIsStressTestOpen] = useState<boolean>(false);
   const [isCardMatcherOpen, setIsCardMatcherOpen] = useState<boolean>(false);
+  const [isTddTestsOpen, setIsTddTestsOpen] = useState<boolean>(false);
 
   // Persist cards
   useEffect(() => {
@@ -260,6 +262,20 @@ export default function App() {
       setIsStressTestOpen(true);
       setIsEvaluating(false);
       showToast('Opening 1,000 Scenarios Stress Test Suite');
+      return;
+    }
+
+    if (
+      qLower.includes('tdd') ||
+      qLower.includes('unit test') ||
+      qLower.includes('28 test') ||
+      qLower.includes('red phase') ||
+      qLower.includes('green phase') ||
+      qLower.includes('test suite')
+    ) {
+      setIsTddTestsOpen(true);
+      setIsEvaluating(false);
+      showToast('Opening 28 TDD Unit Tests Suite');
       return;
     }
 
@@ -475,6 +491,7 @@ export default function App() {
         onOpenShare={() => setIsShareOpen(true)}
         onOpenStressTest={() => setIsStressTestOpen(true)}
         onOpenCardMatcher={() => setIsCardMatcherOpen(true)}
+        onOpenTddTests={() => setIsTddTestsOpen(true)}
         activeCardsCount={activeEnrolledCards.length}
       />
 
@@ -492,6 +509,7 @@ export default function App() {
               onToggleTheme={() => setIsDark(!isDark)}
               onOpenStressTest={() => setIsStressTestOpen(true)}
               onOpenCardMatcher={() => setIsCardMatcherOpen(true)}
+              onOpenTddTests={() => setIsTddTestsOpen(true)}
             />
           </div>
 
@@ -777,6 +795,11 @@ export default function App() {
           setActiveTab('ask');
           handleCustomQuery(prompt);
         }}
+      />
+
+      <TddTestModal
+        isOpen={isTddTestsOpen}
+        onClose={() => setIsTddTestsOpen(false)}
       />
 
       <Toast message={toastMessage} />

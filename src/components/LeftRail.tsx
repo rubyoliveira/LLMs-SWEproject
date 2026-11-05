@@ -1,5 +1,5 @@
 import React from 'react';
-import { MessageSquare, CreditCard, BarChart2, ShieldCheck, Zap, Sun, Moon, Sparkles } from 'lucide-react';
+import { MessageSquare, CreditCard, BarChart2, ShieldCheck, Zap, Sun, Moon, Sparkles, Terminal } from 'lucide-react';
 import { TabType, AppMode } from '../types';
 
 interface LeftRailProps {
@@ -11,6 +11,7 @@ interface LeftRailProps {
   onToggleTheme: () => void;
   onOpenStressTest?: () => void;
   onOpenCardMatcher?: () => void;
+  onOpenTddTests?: () => void;
 }
 
 export const LeftRail: React.FC<LeftRailProps> = ({
@@ -22,6 +23,7 @@ export const LeftRail: React.FC<LeftRailProps> = ({
   onToggleTheme,
   onOpenStressTest,
   onOpenCardMatcher,
+  onOpenTddTests,
 }) => {
   return (
     <aside className="w-16 h-full flex flex-col items-center justify-between py-5 border-r border-[#e8e4df] dark:border-[#272629] bg-[#fbfaf8] dark:bg-[#1a191b] shrink-0">
@@ -97,6 +99,18 @@ export const LeftRail: React.FC<LeftRailProps> = ({
             >
               <Zap className="w-4 h-4 fill-current" />
               <span className="text-[8px] font-bold">1k Test</span>
+            </button>
+          )}
+
+          {onOpenTddTests && (
+            <button
+              type="button"
+              onClick={onOpenTddTests}
+              title="28 TDD Unit Tests Suite"
+              className="w-11 h-11 rounded-xl flex flex-col items-center justify-center gap-1 transition-all cursor-pointer text-indigo-600 dark:text-indigo-400 hover:bg-indigo-500/10"
+            >
+              <Terminal className="w-4 h-4" />
+              <span className="text-[8px] font-bold">28 Tests</span>
             </button>
           )}
         </nav>
