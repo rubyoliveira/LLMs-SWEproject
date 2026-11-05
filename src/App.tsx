@@ -257,8 +257,13 @@ export default function App() {
 
   // Perform search strictly against activeEnrolledCards
   const handleCustomQuery = async (query: string) => {
-    const qLower = (query || '').toLowerCase();
-    if (qLower.includes('stress test') || (qLower.includes('1000') && (qLower.includes('scenario') || qLower.includes('test')))) {
+    const qLower = (query || '').trim().toLowerCase();
+    if (
+      qLower.includes('stress test') ||
+      qLower.includes('1k test') ||
+      qLower.includes('benchmark') ||
+      (qLower.includes('1000') && (qLower.includes('scenario') || qLower.includes('test')))
+    ) {
       setIsStressTestOpen(true);
       setIsEvaluating(false);
       showToast('Opening 1,000 Scenarios Stress Test Suite');
@@ -269,13 +274,45 @@ export default function App() {
       qLower.includes('tdd') ||
       qLower.includes('unit test') ||
       qLower.includes('28 test') ||
+      qLower.includes('run tests') ||
       qLower.includes('red phase') ||
       qLower.includes('green phase') ||
-      qLower.includes('test suite')
+      qLower.includes('test suite') ||
+      qLower === 'tests'
     ) {
       setIsTddTestsOpen(true);
       setIsEvaluating(false);
       showToast('Opening 28 TDD Unit Tests Suite');
+      return;
+    }
+
+    if (
+      qLower.includes('paper') ||
+      qLower.includes('research') ||
+      qLower.includes('whitepaper') ||
+      qLower.includes('citation') ||
+      qLower.includes('methodology') ||
+      qLower.includes('academic') ||
+      qLower.includes('slides')
+    ) {
+      setIsResearchPaperOpen(true);
+      setIsEvaluating(false);
+      showToast('Opening Research Paper & Methodology');
+      return;
+    }
+
+    if (
+      qLower.includes('github') ||
+      qLower.includes('git repo') ||
+      qLower.includes('push to git') ||
+      qLower.includes('source code') ||
+      qLower.includes('download zip') ||
+      qLower.includes('repo') ||
+      qLower === 'git'
+    ) {
+      setIsGitHubOpen(true);
+      setIsEvaluating(false);
+      showToast('Opening GitHub Repository & Code Export');
       return;
     }
 

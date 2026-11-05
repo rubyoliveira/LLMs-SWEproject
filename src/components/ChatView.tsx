@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowUp, Sparkles, Filter, CreditCard, ShieldCheck, Key, CheckCircle2, Zap } from 'lucide-react';
+import { ArrowUp, Sparkles, Filter } from 'lucide-react';
 import { RecommendationCard } from './RecommendationCard';
 import { SafeSpendCard } from './SafeSpendCard';
 import { AmbiguousMerchantCard } from './AmbiguousMerchantCard';
@@ -253,7 +253,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
           <div className="flex items-center justify-between text-[11px] text-[#737373] dark:text-[#9e9e9e] mb-1.5 px-0.5">
             <span>Try another question</span>
             <span className="text-[10px] text-[#8c8c8c] flex items-center gap-1">
-              <Sparkles className="w-3 h-3 text-[#74455d] dark:text-[#c98bb1]" /> Paper Scenarios
+              <Sparkles className="w-3 h-3 text-[#74455d] dark:text-[#c98bb1]" /> Sample Scenarios
             </span>
           </div>
 
@@ -281,15 +281,6 @@ export const ChatView: React.FC<ChatViewProps> = ({
                 <span>💳 Match Cards</span>
               </button>
             )}
-
-            <button
-              type="button"
-              onClick={() => onCustomQuery('stress test')}
-              className="px-3 py-1.5 rounded-lg border text-xs whitespace-nowrap bg-[#74455d]/10 dark:bg-[#c98bb1]/20 text-[#74455d] dark:text-[#c98bb1] border-[#74455d]/30 dark:border-[#c98bb1]/30 hover:bg-[#74455d] hover:text-white dark:hover:bg-[#c98bb1] dark:hover:text-[#181517] cursor-pointer flex items-center gap-1 font-semibold shadow-2xs transition-all"
-            >
-              <Zap className="w-3 h-3 fill-current" />
-              <span>⚡ 1,000 Stress Test</span>
-            </button>
 
             <button
               type="button"

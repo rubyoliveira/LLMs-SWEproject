@@ -112,30 +112,6 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
           )}
 
-          {/* 1,000 Scenarios Stress Test */}
-          <button
-            type="button"
-            onClick={onOpenStressTest}
-            title="Run 1,000 Scenarios Stress Test Benchmark (Startup #5)"
-            className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold text-white bg-[#74455d] hover:bg-[#60354a] dark:bg-[#c98bb1] dark:hover:bg-[#d8a1c3] dark:text-[#191919] rounded-lg transition-colors cursor-pointer shadow-xs"
-          >
-            <Zap className="w-3.5 h-3.5 fill-current" />
-            <span>1,000 Stress Test</span>
-          </button>
-
-          {/* 28 TDD Unit Tests Button */}
-          {onOpenTddTests && (
-            <button
-              type="button"
-              onClick={onOpenTddTests}
-              title="Run 28 TDD Unit Assertions (Red & Green Phase Verification)"
-              className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold text-indigo-700 dark:text-indigo-300 bg-indigo-500/15 hover:bg-indigo-500/25 dark:bg-indigo-500/20 dark:hover:bg-indigo-500/30 rounded-lg transition-colors cursor-pointer shadow-2xs border border-indigo-500/20"
-            >
-              <Terminal className="w-3.5 h-3.5" />
-              <span>28 Tests</span>
-            </button>
-          )}
-
           {/* Upload Cards Button (Enforces user's own cards) */}
           <button
             type="button"
@@ -150,17 +126,6 @@ export const Header: React.FC<HeaderProps> = ({
             </span>
           </button>
 
-          {/* Research Paper & Slide Deck */}
-          <button
-            type="button"
-            onClick={onOpenResearchPaper}
-            title="View Research Paper, Architecture & Quantitative Gates"
-            className="hidden lg:flex items-center gap-1.5 px-2.5 py-1.5 text-xs text-[#525252] dark:text-[#a3a3a3] hover:text-[#191919] dark:hover:text-white bg-[#eae6e1]/70 dark:bg-[#252427] rounded-lg transition-colors cursor-pointer"
-          >
-            <BookOpen className="w-3.5 h-3.5" />
-            <span>Paper</span>
-          </button>
-
           {/* Gemini AI Status */}
           <button
             type="button"
@@ -170,17 +135,6 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <Sparkles className="w-3.5 h-3.5 text-[#74455d] dark:text-[#c98bb1]" />
             <span>Gemini AI</span>
-          </button>
-
-          {/* GitHub & ZIP Export */}
-          <button
-            type="button"
-            onClick={onOpenGitHub}
-            title="GitHub push guide and safe secrets"
-            className="hidden sm:flex items-center gap-1 px-2.5 py-1.5 text-xs text-[#525252] dark:text-[#a3a3a3] hover:text-[#191919] dark:hover:text-white bg-[#eae6e1]/70 dark:bg-[#252427] rounded-lg transition-colors cursor-pointer"
-          >
-            <GitBranch className="w-3.5 h-3.5" />
-            <span className="hidden xl:inline">GitHub / ZIP</span>
           </button>
 
           {/* Share App Button */}

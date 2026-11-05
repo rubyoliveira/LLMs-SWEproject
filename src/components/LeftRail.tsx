@@ -89,30 +89,6 @@ export const LeftRail: React.FC<LeftRailProps> = ({
               <span className="text-[8px] font-semibold">Matcher</span>
             </button>
           )}
-
-          {onOpenStressTest && (
-            <button
-              type="button"
-              onClick={onOpenStressTest}
-              title="1,000 Scenarios Stress Test"
-              className="w-11 h-11 rounded-xl flex flex-col items-center justify-center gap-1 transition-all cursor-pointer text-[#74455d] dark:text-[#c98bb1] hover:bg-[#74455d]/10"
-            >
-              <Zap className="w-4 h-4 fill-current" />
-              <span className="text-[8px] font-bold">1k Test</span>
-            </button>
-          )}
-
-          {onOpenTddTests && (
-            <button
-              type="button"
-              onClick={onOpenTddTests}
-              title="28 TDD Unit Tests Suite"
-              className="w-11 h-11 rounded-xl flex flex-col items-center justify-center gap-1 transition-all cursor-pointer text-indigo-600 dark:text-indigo-400 hover:bg-indigo-500/10"
-            >
-              <Terminal className="w-4 h-4" />
-              <span className="text-[8px] font-bold">28 Tests</span>
-            </button>
-          )}
         </nav>
       </div>
 

@@ -230,7 +230,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({
                     <Sparkles className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
                   </h5>
                   <p className="text-[11px] text-[#737373] dark:text-[#a0a0a0] mt-1 leading-relaxed">
-                    Click the <span className="font-semibold text-[#191919] dark:text-white">GitHub / ZIP</span> button in the navigation header to download the complete standalone source repository or push it to your private/public GitHub account.
+                    Ask the copilot <span className="font-semibold text-[#191919] dark:text-white">"GitHub"</span> or <span className="font-semibold text-[#191919] dark:text-white">"download zip"</span> to push directly to your repository or save the complete standalone code bundle.
                   </p>
                 </div>
               </div>
