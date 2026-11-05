@@ -8,6 +8,7 @@ interface SpendingViewProps {
   transactions: Transaction[];
   totalSpent: number;
   compact?: boolean;
+  onOpenCardMatcher?: () => void;
 }
 
 export const SpendingView: React.FC<SpendingViewProps> = ({
@@ -16,6 +17,7 @@ export const SpendingView: React.FC<SpendingViewProps> = ({
   transactions,
   totalSpent,
   compact = false,
+  onOpenCardMatcher,
 }) => {
   const [query, setQuery] = useState('');
   const [insight, setInsight] = useState<string | null>(
@@ -57,6 +59,32 @@ export const SpendingView: React.FC<SpendingViewProps> = ({
           ${totalSpent.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
         </div>
       </div>
+
+      {/* Match Cards Callout */}
+      {onOpenCardMatcher && (
+        <div className="p-3.5 rounded-xl bg-gradient-to-r from-[#faf6f3] to-[#f4eeec] dark:from-[#242125] dark:to-[#2b262d] border border-[#e8ded5] dark:border-[#38333b] flex items-center justify-between gap-3 shadow-2xs">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-[#74455d]/10 dark:bg-[#c98bb1]/20 text-[#74455d] dark:text-[#c98bb1] flex items-center justify-center shrink-0">
+              <Sparkles className="w-4 h-4" />
+            </div>
+            <div>
+              <div className="text-xs font-bold text-[#191919] dark:text-white">
+                Match Cards to This Spending
+              </div>
+              <div className="text-[11px] text-[#666666] dark:text-[#b0b0b0]">
+                See which market card yields the highest return on your ${totalSpent.toFixed(0)}/mo
+              </div>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={onOpenCardMatcher}
+            className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#74455d] hover:bg-[#60354a] dark:bg-[#c98bb1] dark:hover:bg-[#d8a1c3] text-white dark:text-[#181517] transition-all cursor-pointer shrink-0 shadow-2xs"
+          >
+            Match Cards
+          </button>
+        </div>
+      )}
 
       {/* Query Bar */}
       <form onSubmit={handleSearch} className="relative">

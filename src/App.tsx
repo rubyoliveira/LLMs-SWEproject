@@ -15,6 +15,7 @@ import { DesktopInstallModal } from './components/DesktopInstallModal';
 import { ResearchPaperModal } from './components/ResearchPaperModal';
 import { ShareModal } from './components/ShareModal';
 import { StressTestModal } from './components/StressTestModal';
+import { CardMatcherModal } from './components/CardMatcherModal';
 import { Toast } from './components/Toast';
 import {
   AppMode,
@@ -28,6 +29,7 @@ import {
   InvalidQueryDetails,
 } from './types';
 import { validateCardQuery } from './utils/cardQueryValidator';
+import { CatalogCard, convertCatalogCardToCreditCard } from './utils/cardMatcher';
 import {
   INITIAL_CARDS,
   STARTER_CARD,
@@ -93,6 +95,7 @@ export default function App() {
   const [isResearchPaperOpen, setIsResearchPaperOpen] = useState<boolean>(false);
   const [isShareOpen, setIsShareOpen] = useState<boolean>(false);
   const [isStressTestOpen, setIsStressTestOpen] = useState<boolean>(false);
+  const [isCardMatcherOpen, setIsCardMatcherOpen] = useState<boolean>(false);
 
   // Persist cards
   useEffect(() => {
@@ -181,6 +184,26 @@ export default function App() {
     }, 3200);
   };
 
+  const handleEnrollCard = (catalogCard: CatalogCard) => {
+    const existing = cards.find(
+      (c) =>
+        c.name.toLowerCase() === catalogCard.name.toLowerCase() ||
+        c.id.toLowerCase().includes(catalogCard.id.toLowerCase())
+    );
+
+    if (existing) {
+      if (!activeCardIds.includes(existing.id)) {
+        setActiveCardIds([existing.id, ...activeCardIds]);
+      }
+      showToast(`✓ ${catalogCard.name} is already enrolled and active in your search wallet.`);
+    } else {
+      const newCard = convertCatalogCardToCreditCard(catalogCard);
+      setCards([newCard, ...cards]);
+      setActiveCardIds([newCard.id, ...activeCardIds]);
+      showToast(`✓ ${newCard.name} enrolled and added to your wallet!`);
+    }
+  };
+
   const handleUseCard = () => {
     if (usedCard) return;
     setUsedCard(true);
@@ -237,6 +260,22 @@ export default function App() {
       setIsStressTestOpen(true);
       setIsEvaluating(false);
       showToast('Opening 1,000 Scenarios Stress Test Suite');
+      return;
+    }
+
+    if (
+      qLower.includes('match card') ||
+      qLower.includes('card match') ||
+      qLower.includes('which card matches') ||
+      qLower.includes('recommend a card') ||
+      qLower.includes('card recommendation') ||
+      qLower.includes('best card for my spending') ||
+      qLower.includes('card matcher') ||
+      qLower.includes('find me a card')
+    ) {
+      setIsCardMatcherOpen(true);
+      setIsEvaluating(false);
+      showToast('Opening Card Matcher based on your spending history');
       return;
     }
 
@@ -435,6 +474,7 @@ export default function App() {
         onOpenResearchPaper={() => setIsResearchPaperOpen(true)}
         onOpenShare={() => setIsShareOpen(true)}
         onOpenStressTest={() => setIsStressTestOpen(true)}
+        onOpenCardMatcher={() => setIsCardMatcherOpen(true)}
         activeCardsCount={activeEnrolledCards.length}
       />
 
@@ -451,6 +491,7 @@ export default function App() {
               isDark={isDark}
               onToggleTheme={() => setIsDark(!isDark)}
               onOpenStressTest={() => setIsStressTestOpen(true)}
+              onOpenCardMatcher={() => setIsCardMatcherOpen(true)}
             />
           </div>
 
@@ -489,6 +530,7 @@ export default function App() {
                 onOpenGeminiStatus={() => setIsGeminiStatusOpen(true)}
                 onDirectKeyPasted={handleDirectKeyPasted}
                 invalidQueryData={invalidQueryData}
+                onOpenCardMatcher={() => setIsCardMatcherOpen(true)}
               />
             )}
 
@@ -512,6 +554,7 @@ export default function App() {
                   weeklySpending={weeklySpending}
                   transactions={transactions}
                   totalSpent={totalSpent}
+                  onOpenCardMatcher={() => setIsCardMatcherOpen(true)}
                 />
               </div>
             )}
@@ -561,6 +604,7 @@ export default function App() {
                 transactions={transactions}
                 totalSpent={totalSpent}
                 compact
+                onOpenCardMatcher={() => setIsCardMatcherOpen(true)}
               />
             )}
           </aside>
@@ -607,6 +651,7 @@ export default function App() {
                   onOpenGeminiStatus={() => setIsGeminiStatusOpen(true)}
                   onDirectKeyPasted={handleDirectKeyPasted}
                   invalidQueryData={invalidQueryData}
+                  onOpenCardMatcher={() => setIsCardMatcherOpen(true)}
                 />
               )}
 
@@ -627,6 +672,7 @@ export default function App() {
                   weeklySpending={weeklySpending}
                   transactions={transactions}
                   totalSpent={totalSpent}
+                  onOpenCardMatcher={() => setIsCardMatcherOpen(true)}
                 />
               )}
             </div>
@@ -717,6 +763,17 @@ export default function App() {
         isOpen={isStressTestOpen}
         onClose={() => setIsStressTestOpen(false)}
         onTestScenarioInCopilot={(prompt) => {
+          setActiveTab('ask');
+          handleCustomQuery(prompt);
+        }}
+      />
+
+      <CardMatcherModal
+        isOpen={isCardMatcherOpen}
+        onClose={() => setIsCardMatcherOpen(false)}
+        userCards={cards}
+        onEnrollCard={handleEnrollCard}
+        onAskCopilot={(prompt) => {
           setActiveTab('ask');
           handleCustomQuery(prompt);
         }}

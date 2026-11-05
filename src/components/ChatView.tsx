@@ -40,6 +40,7 @@ interface ChatViewProps {
   onOpenGeminiStatus: () => void;
   onDirectKeyPasted: (key: string) => void;
   invalidQueryData?: InvalidQueryDetails | null;
+  onOpenCardMatcher?: () => void;
 }
 
 export const ChatView: React.FC<ChatViewProps> = ({
@@ -66,6 +67,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
   onOpenGeminiStatus,
   onDirectKeyPasted,
   invalidQueryData,
+  onOpenCardMatcher,
 }) => {
   const [inputValue, setInputValue] = useState('');
 
@@ -180,6 +182,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
             activeCards={activeCards}
             onOpenUploadCards={onOpenUploadCards}
             onSelectScenario={onSelectScenario}
+            onOpenCardMatcher={onOpenCardMatcher}
           />
         ) : scenario === 'invalid-query' ? (
           invalidQueryData ? (
@@ -266,6 +269,18 @@ export const ChatView: React.FC<ChatViewProps> = ({
             >
               👋 Welcome
             </button>
+
+            {onOpenCardMatcher && (
+              <button
+                type="button"
+                onClick={onOpenCardMatcher}
+                className="px-3 py-1.5 rounded-lg border text-xs whitespace-nowrap bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border-emerald-500/30 hover:bg-emerald-600 hover:text-white dark:hover:bg-emerald-500 dark:hover:text-[#181517] cursor-pointer flex items-center gap-1 font-semibold shadow-2xs transition-all"
+                title="Match cards based on your spending history"
+              >
+                <Sparkles className="w-3 h-3" />
+                <span>💳 Match Cards</span>
+              </button>
+            )}
 
             <button
               type="button"

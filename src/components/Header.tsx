@@ -30,6 +30,7 @@ interface HeaderProps {
   onOpenShare: () => void;
   onOpenStressTest: () => void;
   activeCardsCount: number;
+  onOpenCardMatcher?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -47,6 +48,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenShare,
   onOpenStressTest,
   activeCardsCount,
+  onOpenCardMatcher,
 }) => {
   return (
     <header className="w-full bg-[#f7f6f4] dark:bg-[#171718] border-b border-[#e9e6e2] dark:border-[#272629] sticky top-0 z-30 transition-colors">
@@ -94,6 +96,19 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Action Controls */}
         <div className="flex items-center gap-1.5 sm:gap-2">
+          {/* Card Matcher Button */}
+          {onOpenCardMatcher && (
+            <button
+              type="button"
+              onClick={onOpenCardMatcher}
+              title="Match Cards based on your Spending History (New User Onboarding)"
+              className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold text-emerald-800 dark:text-emerald-300 bg-emerald-500/15 hover:bg-emerald-500/25 dark:bg-emerald-500/20 dark:hover:bg-emerald-500/30 rounded-lg transition-colors cursor-pointer shadow-2xs border border-emerald-500/20"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+              <span>Card Matcher</span>
+            </button>
+          )}
+
           {/* 1,000 Scenarios Stress Test */}
           <button
             type="button"

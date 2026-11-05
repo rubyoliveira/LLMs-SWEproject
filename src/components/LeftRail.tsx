@@ -1,5 +1,5 @@
 import React from 'react';
-import { MessageSquare, CreditCard, BarChart2, ShieldCheck, Zap, Sun, Moon } from 'lucide-react';
+import { MessageSquare, CreditCard, BarChart2, ShieldCheck, Zap, Sun, Moon, Sparkles } from 'lucide-react';
 import { TabType, AppMode } from '../types';
 
 interface LeftRailProps {
@@ -10,6 +10,7 @@ interface LeftRailProps {
   isDark: boolean;
   onToggleTheme: () => void;
   onOpenStressTest?: () => void;
+  onOpenCardMatcher?: () => void;
 }
 
 export const LeftRail: React.FC<LeftRailProps> = ({
@@ -20,6 +21,7 @@ export const LeftRail: React.FC<LeftRailProps> = ({
   isDark,
   onToggleTheme,
   onOpenStressTest,
+  onOpenCardMatcher,
 }) => {
   return (
     <aside className="w-16 h-full flex flex-col items-center justify-between py-5 border-r border-[#e8e4df] dark:border-[#272629] bg-[#fbfaf8] dark:bg-[#1a191b] shrink-0">
@@ -73,6 +75,18 @@ export const LeftRail: React.FC<LeftRailProps> = ({
             <BarChart2 className="w-4 h-4" />
             <span className="text-[9px] font-medium">Spending</span>
           </button>
+
+          {onOpenCardMatcher && (
+            <button
+              type="button"
+              onClick={onOpenCardMatcher}
+              title="Card Matcher (Based on Spending History)"
+              className="w-11 h-11 rounded-xl flex flex-col items-center justify-center gap-1 transition-all cursor-pointer text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/10"
+            >
+              <Sparkles className="w-4 h-4" />
+              <span className="text-[8px] font-semibold">Matcher</span>
+            </button>
+          )}
 
           {onOpenStressTest && (
             <button

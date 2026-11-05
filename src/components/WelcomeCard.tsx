@@ -18,6 +18,7 @@ interface WelcomeCardProps {
   activeCards: CreditCardType[];
   onOpenUploadCards: () => void;
   onSelectScenario: (scenario: any) => void;
+  onOpenCardMatcher?: () => void;
 }
 
 export const WelcomeCard: React.FC<WelcomeCardProps> = ({
@@ -26,6 +27,7 @@ export const WelcomeCard: React.FC<WelcomeCardProps> = ({
   activeCards,
   onOpenUploadCards,
   onSelectScenario,
+  onOpenCardMatcher,
 }) => {
   // Check for any active credits
   const cardsWithCredits = activeCards.filter(
@@ -56,15 +58,61 @@ export const WelcomeCard: React.FC<WelcomeCardProps> = ({
           </div>
         </div>
 
-        <button
-          type="button"
-          onClick={onOpenUploadCards}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-[#f5f1ec] dark:bg-[#28262a] hover:bg-[#ede7e0] dark:hover:bg-[#343136] text-[#191919] dark:text-white transition-colors cursor-pointer shrink-0"
-        >
-          <CreditCard className="w-3.5 h-3.5 text-[#74455d] dark:text-[#c98bb1]" />
-          <span>My Cards ({activeCards.length})</span>
-        </button>
+        <div className="flex items-center gap-2 shrink-0">
+          {onOpenCardMatcher && (
+            <button
+              type="button"
+              onClick={onOpenCardMatcher}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#74455d] hover:bg-[#60354a] dark:bg-[#c98bb1] dark:hover:bg-[#d8a1c3] text-white dark:text-[#181517] transition-all cursor-pointer shadow-2xs"
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Card Matcher</span>
+            </button>
+          )}
+
+          <button
+            type="button"
+            onClick={onOpenUploadCards}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-[#f5f1ec] dark:bg-[#28262a] hover:bg-[#ede7e0] dark:hover:bg-[#343136] text-[#191919] dark:text-white transition-colors cursor-pointer shrink-0"
+          >
+            <CreditCard className="w-3.5 h-3.5 text-[#74455d] dark:text-[#c98bb1]" />
+            <span>My Cards ({activeCards.length})</span>
+          </button>
+        </div>
       </div>
+
+      {/* New User Card Matching Spotlight Banner */}
+      {onOpenCardMatcher && (
+        <div className="p-4 rounded-xl bg-gradient-to-r from-[#faf6f3] via-[#f7f2ed] to-[#f4eeec] dark:from-[#242125] dark:via-[#28242a] dark:to-[#2b262d] border border-[#e8ded5] dark:border-[#38333b] flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
+          <div className="flex items-start gap-3">
+            <div className="w-9 h-9 rounded-xl bg-[#74455d]/10 dark:bg-[#c98bb1]/20 text-[#74455d] dark:text-[#c98bb1] flex items-center justify-center shrink-0 mt-0.5">
+              <TrendingUp className="w-4 h-4" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold text-[#191919] dark:text-white">
+                  New to RocketRewards? Match Cards to Your Spending History
+                </span>
+                <span className="text-[9px] font-bold px-1.5 py-0.2 rounded-full bg-[#74455d] dark:bg-[#c98bb1] text-white dark:text-[#191919]">
+                  NEW
+                </span>
+              </div>
+              <p className="text-[11.5px] text-[#666666] dark:text-[#b8b8b8] mt-0.5 leading-relaxed">
+                Analyze your actual $1,450.40/mo spending history or archetype presets (Dining, Travel, Groceries, Rent) to find the highest net-value card and stop leaving rewards on the table.
+              </p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={onOpenCardMatcher}
+            className="flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold bg-[#74455d] hover:bg-[#60354a] dark:bg-[#c98bb1] dark:hover:bg-[#d8a1c3] text-white dark:text-[#181517] transition-all cursor-pointer shrink-0 shadow-xs"
+          >
+            <span>Match My Cards</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      )}
 
       {/* Expiring Credit Alert if present */}
       {firstCredit && (
