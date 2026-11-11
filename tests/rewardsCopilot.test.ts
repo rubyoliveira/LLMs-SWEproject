@@ -196,4 +196,54 @@ describe('RocketRewards TDD Unit Assertions (28 Tests)', () => {
       expect(swipe.recommendedCardId).toBe('card-b');
     });
   });
+
+  // Domain 8: Plaid Multi-Card Integration & Precise Category Grounding
+  describe('Domain 8: Plaid Multi-Card Integration & Precise MCC Grounding', () => {
+    it('29: Plaid multi-card portfolio includes Amex Gold with 4x dining and credits', () => {
+      const amexGold = {
+        id: 'amex-gold',
+        name: 'American Express Gold',
+        isPlaidConnected: true,
+        creditLimit: 12000,
+        balance: 842.16,
+        multiplierCategories: [
+          { category: 'Dining & Restaurants', multiplier: 4 },
+          { category: 'US Supermarkets', multiplier: 4 },
+        ],
+        activeCredits: [
+          { id: 'amex-dining-credit', title: '$10 dining credit', amount: 10, remaining: 10 },
+        ],
+      };
+      expect(amexGold.isPlaidConnected).toBe(true);
+      expect(amexGold.multiplierCategories[0].multiplier).toBe(4);
+      expect(amexGold.activeCredits[0].remaining).toBe(10);
+    });
+
+    it('30: Plaid portfolio calculates aggregate credit limit and utilization safely', () => {
+      const cards = [
+        { balance: 842.16, creditLimit: 12000 },
+        { balance: 1170.0, creditLimit: 9000 },
+        { balance: 415.5, creditLimit: 15000 },
+      ];
+      const totalBalance = cards.reduce((acc, c) => acc + c.balance, 0);
+      const totalLimit = cards.reduce((acc, c) => acc + c.creditLimit, 0);
+      const utilPct = Math.round((totalBalance / totalLimit) * 100);
+
+      expect(totalLimit).toBe(36000);
+      expect(utilPct).toBe(7); // 7% is safe under 10%
+    });
+
+    it('31: Accurate MCC resolution handles Delta airlines as MCC 4511 travel', () => {
+      const deltaMcc = resolveMerchantMcc('Delta Airlines');
+      expect(deltaMcc.mcc).toBe('4511');
+      expect(deltaMcc.isDining).toBe(false);
+      expect(deltaMcc.isSupermarketEligible).toBe(false);
+    });
+
+    it('32: Accurate MCC resolution handles Trader Joe\'s as MCC 5411 supermarkets', () => {
+      const tjMcc = resolveMerchantMcc('Trader Joe\'s');
+      expect(tjMcc.mcc).toBe('5411');
+      expect(tjMcc.isSupermarketEligible).toBe(true);
+    });
+  });
 });

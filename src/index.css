@@ -1,13 +1,28 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @layer base {
   :root {
     --font-notion: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+    color-scheme: light;
+  }
+
+  :root.dark {
+    color-scheme: dark;
   }
 
   body {
     font-family: var(--font-notion);
     letter-spacing: -0.012em;
+    background-color: #f7f6f4;
+    color: #191919;
+  }
+
+  .dark body,
+  body.dark {
+    background-color: #171718;
+    color: #f3f3f3;
   }
 }
 

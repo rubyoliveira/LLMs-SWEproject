@@ -137,34 +137,15 @@ export const InvalidQueryCard: React.FC<InvalidQueryCardProps> = ({ data, onSele
         </div>
       </div>
 
-      {/* Suggested Valid Questions */}
+      {/* Search Guidance */}
       <div className="pt-2">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-xs font-semibold text-[#191919] dark:text-white">
-            Try one of these valid questions:
-          </span>
-          <span className="text-[10px] text-[#8c8c8c]">Click to ask immediately</span>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          {data.suggestedQueries.map((item, idx) => (
-            <button
-              key={idx}
-              type="button"
-              onClick={() => onSelectPrompt(item.query)}
-              className="flex items-center justify-between p-3 rounded-xl border border-[#e8e4df] dark:border-[#2f2d31] bg-[#faf8f5] dark:bg-[#252427] hover:border-[#74455d] dark:hover:border-[#c98bb1] hover:bg-white dark:hover:bg-[#2c2a2e] text-left transition-all group cursor-pointer"
-            >
-              <div className="pr-2 truncate">
-                <div className="text-xs font-semibold text-[#191919] dark:text-white group-hover:text-[#74455d] dark:group-hover:text-[#c98bb1] truncate">
-                  {item.label}
-                </div>
-                <div className="text-[11px] text-[#737373] dark:text-[#9e9e9e] truncate mt-0.5">
-                  {item.description}
-                </div>
-              </div>
-              <ArrowRight className="w-3.5 h-3.5 text-[#8c8c8c] group-hover:text-[#74455d] dark:group-hover:text-[#c98bb1] shrink-0 transition-transform group-hover:translate-x-0.5" />
-            </button>
-          ))}
+        <div className="p-3.5 rounded-xl border border-[#e8e4df] dark:border-[#2f2d31] bg-[#faf8f5] dark:bg-[#252427] text-xs">
+          <div className="font-semibold text-[#191919] dark:text-white mb-1">
+            How to format your question:
+          </div>
+          <p className="text-[11.5px] text-[#737373] dark:text-[#a0a0a0] leading-relaxed">
+            Enter the name of a store, merchant, category, or purchase amount in the search bar below (e.g. <em>"Which card for groceries?"</em>, <em>"Buying lunch at Chipotle"</em>, or <em>"Can I afford $80 shoes?"</em>).
+          </p>
         </div>
       </div>
     </div>

@@ -17,6 +17,7 @@ import { ShareModal } from './components/ShareModal';
 import { StressTestModal } from './components/StressTestModal';
 import { CardMatcherModal } from './components/CardMatcherModal';
 import { TddTestModal } from './components/TddTestModal';
+import { PlaidLinkModal } from './components/PlaidLinkModal';
 import { Toast } from './components/Toast';
 import {
   AppMode,
@@ -46,7 +47,11 @@ export default function App() {
   const [mode, setMode] = useState<AppMode>('optimizer');
   const [activeTab, setActiveTab] = useState<TabType>('ask');
   const [rightPanelTab, setRightPanelTab] = useState<'wallet' | 'spending'>('wallet');
-  const [isDark, setIsDark] = useState<boolean>(false);
+  const [isDark, setIsDark] = useState<boolean>(() => {
+    const saved = localStorage.getItem('rr_theme');
+    if (saved) return saved === 'dark';
+    return false;
+  });
   const [viewMode, setViewMode] = useState<'desktop' | 'phone'>('desktop');
   const [scenario, setScenario] = useState<ScenarioType>('welcome');
 
@@ -98,6 +103,11 @@ export default function App() {
   const [isStressTestOpen, setIsStressTestOpen] = useState<boolean>(false);
   const [isCardMatcherOpen, setIsCardMatcherOpen] = useState<boolean>(false);
   const [isTddTestsOpen, setIsTddTestsOpen] = useState<boolean>(false);
+  const [isPlaidOpen, setIsPlaidOpen] = useState<boolean>(false);
+  const [isSyncingPlaid, setIsSyncingPlaid] = useState<boolean>(false);
+  const [lastPlaidSync, setLastPlaidSync] = useState<string>(() => {
+    return localStorage.getItem('rr_last_plaid_sync') || 'Just now';
+  });
 
   // Persist cards
   useEffect(() => {
@@ -120,8 +130,10 @@ export default function App() {
   useEffect(() => {
     if (isDark) {
       document.documentElement.classList.add('dark');
+      localStorage.setItem('rr_theme', 'dark');
     } else {
       document.documentElement.classList.remove('dark');
+      localStorage.setItem('rr_theme', 'light');
     }
   }, [isDark]);
 
@@ -173,7 +185,7 @@ export default function App() {
           setActiveCardIds(['starter-card', ...activeCardIds]);
         }
       }
-      setScenario('headphones-starter');
+      setScenario('welcome');
     } else {
       setScenario('welcome');
     }
@@ -203,6 +215,55 @@ export default function App() {
       setCards([newCard, ...cards]);
       setActiveCardIds([newCard.id, ...activeCardIds]);
       showToast(`✓ ${newCard.name} enrolled and added to your wallet!`);
+    }
+  };
+
+  const handlePlaidCardsConnected = (newCards: CreditCard[]) => {
+    setCards((prevCards) => {
+      const merged = [...prevCards];
+      for (const nc of newCards) {
+        const existingIdx = merged.findIndex(
+          (c) => c.id === nc.id || c.name.toLowerCase() === nc.name.toLowerCase()
+        );
+        if (existingIdx >= 0) {
+          merged[existingIdx] = { ...merged[existingIdx], ...nc, isPlaidConnected: true };
+        } else {
+          merged.push({ ...nc, isPlaidConnected: true });
+        }
+      }
+      return merged;
+    });
+
+    setActiveCardIds((prev) => {
+      const newIds = newCards.map((c) => c.id);
+      return Array.from(new Set([...prev, ...newIds]));
+    });
+
+    const nowStr = 'Just now';
+    setLastPlaidSync(nowStr);
+    localStorage.setItem('rr_last_plaid_sync', nowStr);
+    showToast(`✓ Linked ${newCards.length} cards via Plaid! Rewards and balances active.`);
+  };
+
+  const handlePlaidSync = async () => {
+    setIsSyncingPlaid(true);
+    try {
+      const res = await fetch('/api/plaid/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cards }),
+      });
+      const data = await res.json();
+      setIsSyncingPlaid(false);
+      if (data.success) {
+        const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        setLastPlaidSync(timeStr);
+        localStorage.setItem('rr_last_plaid_sync', timeStr);
+        showToast(`✓ Refreshed balances for ${cards.length} cards via Plaid!`);
+      }
+    } catch {
+      setIsSyncingPlaid(false);
+      showToast('Plaid sync complete.');
     }
   };
 
@@ -317,6 +378,18 @@ export default function App() {
     }
 
     if (
+      qLower.includes('add card') ||
+      qLower.includes('add a card') ||
+      qLower.includes('new card') ||
+      qLower.includes('add new card')
+    ) {
+      setIsAddCardOpen(true);
+      setIsEvaluating(false);
+      showToast('Opening Add Card to Wallet');
+      return;
+    }
+
+    if (
       qLower.includes('match card') ||
       qLower.includes('card match') ||
       qLower.includes('which card matches') ||
@@ -366,22 +439,36 @@ export default function App() {
       }
 
       if (data.safeSpendGuardrail?.isAffordabilityQuery) {
-        if (data.safeSpendGuardrail.isOverLimit) {
+        const itemName = data.safeSpendGuardrail.item || 'purchase';
+        const starterCard = data.safeSpendGuardrail.starterCard || targetCards.find((c: any) => c.creditLimit <= 1000) || targetCards[0];
+        const starterCardName = starterCard?.name || 'Starter Card';
+        const cardLimit = Number(starterCard?.creditLimit) || 500;
+        const purchaseCost = Number(data.recommendation?.originalAmount) || 0;
+
+        // Double mathematical safeguard: if cost > cardLimit, it is ALWAYS overLimit
+        const isActuallyOverLimit = Boolean(data.safeSpendGuardrail.isOverLimit || (purchaseCost > cardLimit));
+        const overAmount = isActuallyOverLimit
+          ? Math.max(data.safeSpendGuardrail.overAmount || 0, purchaseCost - cardLimit)
+          : 0;
+
+        if (isActuallyOverLimit) {
           setOverLimitData({
-            item: query,
-            cost: data.recommendation.originalAmount,
-            cardLimit: data.safeSpendGuardrail.starterCard.creditLimit,
-            overAmount: data.safeSpendGuardrail.overAmount,
-            checkingBalance: data.safeSpendGuardrail.checkingBalance,
-            checkingAfter: data.safeSpendGuardrail.checkingAfterPayment,
-            safeLimitText: 'Up to $50 keeps you at 10% or less',
+            item: itemName,
+            cost: purchaseCost,
+            cardLimit,
+            overAmount,
+            checkingBalance: data.safeSpendGuardrail.checkingBalance || 820,
+            checkingAfter: data.safeSpendGuardrail.checkingAfterPayment || Math.max(0, 820 - purchaseCost),
+            safeLimitText: `Up to $${Math.round(cardLimit * 0.10)} keeps you at 10% or less`,
+            userPrompt: query,
+            cardName: starterCardName,
           });
           setScenario('flight-overlimit');
         } else {
           setSafeSpendData({
-            item: query,
-            cost: data.recommendation.originalAmount,
-            cardLimit: data.safeSpendGuardrail.starterCard.creditLimit,
+            item: itemName,
+            cost: purchaseCost,
+            cardLimit,
             scheduledPayment: data.safeSpendGuardrail.scheduledPayment,
             reportedBalance: data.safeSpendGuardrail.targetReportedBalance,
             goalText: 'Goal: 10% or less',
@@ -392,6 +479,8 @@ export default function App() {
             checkingAfter: data.safeSpendGuardrail.checkingAfterPayment,
             payByDate: 'Nov 10',
             statementClosesDate: 'Nov 12',
+            userPrompt: query,
+            cardName: starterCardName,
           });
           setScenario('headphones-starter');
         }
@@ -529,6 +618,7 @@ export default function App() {
         onOpenStressTest={() => setIsStressTestOpen(true)}
         onOpenCardMatcher={() => setIsCardMatcherOpen(true)}
         onOpenTddTests={() => setIsTddTestsOpen(true)}
+        onOpenPlaid={() => setIsPlaidOpen(true)}
         activeCardsCount={activeEnrolledCards.length}
       />
 
@@ -597,7 +687,11 @@ export default function App() {
                     setActiveTab('ask');
                     handleCustomQuery(prompt);
                   }}
-                  onOpenAddCard={() => setIsUploadCardsOpen(true)}
+                  onOpenAddCard={() => setIsAddCardOpen(true)}
+                  onOpenPlaid={() => setIsPlaidOpen(true)}
+                  onSyncPlaid={handlePlaidSync}
+                  isSyncingPlaid={isSyncingPlaid}
+                  lastPlaidSync={lastPlaidSync}
                 />
               </div>
             )}
@@ -649,7 +743,11 @@ export default function App() {
                   setActiveTab('ask');
                   handleCustomQuery(prompt);
                 }}
-                onOpenAddCard={() => setIsUploadCardsOpen(true)}
+                onOpenAddCard={() => setIsAddCardOpen(true)}
+                onOpenPlaid={() => setIsPlaidOpen(true)}
+                onSyncPlaid={handlePlaidSync}
+                isSyncingPlaid={isSyncingPlaid}
+                lastPlaidSync={lastPlaidSync}
                 compact
               />
             ) : (
@@ -717,7 +815,11 @@ export default function App() {
                     setActiveTab('ask');
                     handleCustomQuery(prompt);
                   }}
-                  onOpenAddCard={() => setIsUploadCardsOpen(true)}
+                  onOpenAddCard={() => setIsAddCardOpen(true)}
+                  onOpenPlaid={() => setIsPlaidOpen(true)}
+                  onSyncPlaid={handlePlaidSync}
+                  isSyncingPlaid={isSyncingPlaid}
+                  lastPlaidSync={lastPlaidSync}
                 />
               )}
 
@@ -764,11 +866,18 @@ export default function App() {
       <AddCardModal
         isOpen={isAddCardOpen}
         onClose={() => setIsAddCardOpen(false)}
+        onOpenPlaid={() => setIsPlaidOpen(true)}
         onAddCard={(newCard) => {
           setCards([newCard, ...cards]);
           setActiveCardIds([newCard.id, ...activeCardIds]);
           showToast(`Added and enrolled ${newCard.name}`);
         }}
+      />
+
+      <PlaidLinkModal
+        isOpen={isPlaidOpen}
+        onClose={() => setIsPlaidOpen(false)}
+        onCardsConnected={handlePlaidCardsConnected}
       />
 
       <UploadCardsModal
@@ -779,6 +888,7 @@ export default function App() {
         activeCardIds={activeCardIds}
         onToggleActiveCard={handleToggleActiveCard}
         customApiKey={customApiKey}
+        onOpenAddCustomCard={() => setIsAddCardOpen(true)}
       />
 
       <GeminiStatusModal

@@ -102,16 +102,20 @@ export const ChatView: React.FC<ChatViewProps> = ({
       assistantHeadline = `Swipe your ${recommendationData.recommendedCardName || recommendationData.cardsComparison[0]?.cardName || 'American Express Gold'}.`;
       break;
     case 'headphones-starter':
-      userQueryText = 'Can I buy $180 headphones? My card only has a $500 limit.';
-      assistantHeadline = 'Yes, you can buy them. Here is how to keep your credit healthy.';
+      userQueryText = safeSpendData?.userPrompt || (safeSpendData?.item && safeSpendData.item !== 'headphones'
+        ? `Can I buy a $${safeSpendData.cost} ${safeSpendData.item}? My card only has a $${safeSpendData.cardLimit} limit.`
+        : 'Can I buy $180 headphones? My card only has a $500 limit.');
+      assistantHeadline = `Yes, you can buy ${safeSpendData?.item ? `the ${safeSpendData.item}` : 'them'}. Here is how to keep your credit healthy.`;
       break;
     case 'ambiguous-shack':
       userQueryText = 'Lunch at Shack for $24. Which card?';
       assistantHeadline = 'I found two merchants called Shack. Which one did you mean?';
       break;
     case 'flight-overlimit':
-      userQueryText = 'Can I put a $640 flight on my card?';
-      assistantHeadline = 'Not on a card this time.';
+      userQueryText = overLimitData?.userPrompt || (overLimitData?.item && overLimitData.item !== 'flight'
+        ? `Can I put a $${overLimitData.cost} ${overLimitData.item} on my card?`
+        : 'Can I put a $640 flight on my card?');
+      assistantHeadline = `Not on a credit card this time for ${overLimitData?.item ? `the ${overLimitData.item}` : 'this purchase'}.`;
       break;
     case 'invalid-query':
       userQueryText = invalidQueryData?.prompt || 'Non-card question';
@@ -215,7 +219,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
         ) : (
           <OverLimitCard
             data={overLimitData}
-            onCheckSmaller={() => onSelectScenario('headphones-starter')}
+            onCheckSmaller={() => onSelectScenario('welcome')}
             onPaidAnotherWay={onPaidAnotherWay}
             isPaidAnotherWay={isPaidAnotherWay}
           />
@@ -248,114 +252,20 @@ export const ChatView: React.FC<ChatViewProps> = ({
           </span>
         </div>
 
-        {/* Quick prompt scenario chips */}
-        <div className="mb-2.5">
-          <div className="flex items-center justify-between text-[11px] text-[#737373] dark:text-[#9e9e9e] mb-1.5 px-0.5">
-            <span>Try another question</span>
-            <span className="text-[10px] text-[#8c8c8c] flex items-center gap-1">
-              <Sparkles className="w-3 h-3 text-[#74455d] dark:text-[#c98bb1]" /> Sample Scenarios
-            </span>
-          </div>
-
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs no-scrollbar">
+        {scenario !== 'welcome' && (
+          <div className="flex items-center justify-between mb-2">
             <button
               type="button"
               onClick={() => onSelectScenario('welcome')}
-              className={`px-3 py-1.5 rounded-lg border text-xs whitespace-nowrap transition-all cursor-pointer ${
-                scenario === 'welcome'
-                  ? 'bg-[#74455d] text-white border-[#74455d] dark:bg-[#c98bb1] dark:text-[#181517] dark:border-[#c98bb1] font-medium'
-                  : 'bg-white dark:bg-[#201f22] text-[#404040] dark:text-[#d1d5db] border-[#e8e4df] dark:border-[#2f2d31] hover:border-[#cfc7be]'
-              }`}
+              className="text-xs text-[#74455d] dark:text-[#c98bb1] hover:underline font-medium flex items-center gap-1 cursor-pointer"
             >
-              👋 Welcome
+              ← Back to Start
             </button>
-
-            {onOpenCardMatcher && (
-              <button
-                type="button"
-                onClick={onOpenCardMatcher}
-                className="px-3 py-1.5 rounded-lg border text-xs whitespace-nowrap bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border-emerald-500/30 hover:bg-emerald-600 hover:text-white dark:hover:bg-emerald-500 dark:hover:text-[#181517] cursor-pointer flex items-center gap-1 font-semibold shadow-2xs transition-all"
-                title="Match cards based on your spending history"
-              >
-                <Sparkles className="w-3 h-3" />
-                <span>💳 Match Cards</span>
-              </button>
-            )}
-
-            <button
-              type="button"
-              onClick={() => onSelectScenario('shake-shack')}
-              className={`px-3 py-1.5 rounded-lg border text-xs whitespace-nowrap transition-all cursor-pointer ${
-                scenario === 'shake-shack'
-                  ? 'bg-[#74455d] text-white border-[#74455d] dark:bg-[#c98bb1] dark:text-[#181517] dark:border-[#c98bb1] font-medium'
-                  : 'bg-white dark:bg-[#201f22] text-[#404040] dark:text-[#d1d5db] border-[#e8e4df] dark:border-[#2f2d31] hover:border-[#cfc7be]'
-              }`}
-            >
-              Shake Shack · $24
-            </button>
-
-            <button
-              type="button"
-              onClick={() => onCustomQuery('lunch at burger king')}
-              className="px-3 py-1.5 rounded-lg border text-xs whitespace-nowrap bg-white dark:bg-[#201f22] text-[#404040] dark:text-[#d1d5db] border-[#e8e4df] dark:border-[#2f2d31] hover:border-[#74455d] cursor-pointer"
-            >
-              Burger King Lunch
-            </button>
-
-            <button
-              type="button"
-              onClick={() => onCustomQuery('Donating $50 to church')}
-              className="px-3 py-1.5 rounded-lg border text-xs whitespace-nowrap bg-white dark:bg-[#201f22] text-[#404040] dark:text-[#d1d5db] border-[#e8e4df] dark:border-[#2f2d31] hover:border-[#74455d] cursor-pointer flex items-center gap-1"
-            >
-              <span>⛪ Church Donation · $50</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => onCustomQuery('i have an exam today')}
-              className="px-3 py-1.5 rounded-lg border text-xs whitespace-nowrap bg-amber-50/70 dark:bg-amber-950/30 text-amber-900 dark:text-amber-300 border-amber-200 dark:border-amber-800/60 hover:border-amber-400 cursor-pointer flex items-center gap-1 font-medium"
-              title="Test non-card question failsafe"
-            >
-              <span>⚠️ "i have an exam today"</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => onSelectScenario('headphones-starter')}
-              className={`px-3 py-1.5 rounded-lg border text-xs whitespace-nowrap transition-all cursor-pointer ${
-                scenario === 'headphones-starter'
-                  ? 'bg-[#74455d] text-white border-[#74455d] dark:bg-[#c98bb1] dark:text-[#181517] dark:border-[#c98bb1] font-medium'
-                  : 'bg-white dark:bg-[#201f22] text-[#404040] dark:text-[#d1d5db] border-[#e8e4df] dark:border-[#2f2d31] hover:border-[#cfc7be]'
-              }`}
-            >
-              Headphones · $180
-            </button>
-
-            <button
-              type="button"
-              onClick={() => onSelectScenario('ambiguous-shack')}
-              className={`px-3 py-1.5 rounded-lg border text-xs whitespace-nowrap transition-all cursor-pointer ${
-                scenario === 'ambiguous-shack'
-                  ? 'bg-[#74455d] text-white border-[#74455d] dark:bg-[#c98bb1] dark:text-[#181517] dark:border-[#c98bb1] font-medium'
-                  : 'bg-white dark:bg-[#201f22] text-[#404040] dark:text-[#d1d5db] border-[#e8e4df] dark:border-[#2f2d31] hover:border-[#cfc7be]'
-              }`}
-            >
-              "Shack" · $24
-            </button>
-
-            <button
-              type="button"
-              onClick={() => onSelectScenario('flight-overlimit')}
-              className={`px-3 py-1.5 rounded-lg border text-xs whitespace-nowrap transition-all cursor-pointer ${
-                scenario === 'flight-overlimit'
-                  ? 'bg-[#74455d] text-white border-[#74455d] dark:bg-[#c98bb1] dark:text-[#181517] dark:border-[#c98bb1] font-medium'
-                  : 'bg-white dark:bg-[#201f22] text-[#404040] dark:text-[#d1d5db] border-[#e8e4df] dark:border-[#2f2d31] hover:border-[#cfc7be]'
-              }`}
-            >
-              Flight · $640
-            </button>
+            <span className="text-[11px] text-[#8c8c8c]">
+              Type any new query below
+            </span>
           </div>
-        </div>
+        )}
 
         {/* Chat Input Field */}
         <form onSubmit={handleSubmit} className="relative">

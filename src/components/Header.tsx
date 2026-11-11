@@ -33,6 +33,7 @@ interface HeaderProps {
   activeCardsCount: number;
   onOpenCardMatcher?: () => void;
   onOpenTddTests?: () => void;
+  onOpenPlaid?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -52,6 +53,7 @@ export const Header: React.FC<HeaderProps> = ({
   activeCardsCount,
   onOpenCardMatcher,
   onOpenTddTests,
+  onOpenPlaid,
 }) => {
   return (
     <header className="w-full bg-[#f7f6f4] dark:bg-[#171718] border-b border-[#e9e6e2] dark:border-[#272629] sticky top-0 z-30 transition-colors">
@@ -109,6 +111,19 @@ export const Header: React.FC<HeaderProps> = ({
             >
               <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
               <span>Card Matcher</span>
+            </button>
+          )}
+
+          {/* Plaid Link Button */}
+          {onOpenPlaid && (
+            <button
+              type="button"
+              onClick={onOpenPlaid}
+              title="Connect cards via Plaid Link"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold bg-[#111] dark:bg-white text-white dark:text-[#111] hover:opacity-90 rounded-lg transition-all cursor-pointer shadow-2xs"
+            >
+              <span className="font-mono font-black text-[11px] text-amber-300 dark:text-[#74455d]">☵</span>
+              <span className="hidden sm:inline">Plaid</span>
             </button>
           )}
 
@@ -173,10 +188,11 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             type="button"
             onClick={onToggleTheme}
-            aria-label="Toggle dark mode"
-            className="w-8 h-8 rounded-lg flex items-center justify-center text-[#525252] dark:text-[#a3a3a3] hover:text-[#191919] dark:hover:text-white hover:bg-[#eae6e1] dark:hover:bg-[#252427] transition-colors"
+            aria-label={isDark ? 'Switch to Light mode' : 'Switch to Dark mode'}
+            title={isDark ? 'Switch to Light mode' : 'Switch to Dark mode'}
+            className="w-8 h-8 rounded-lg flex items-center justify-center text-[#525252] dark:text-[#a3a3a3] hover:text-[#191919] dark:hover:text-white hover:bg-[#eae6e1] dark:hover:bg-[#252427] transition-colors cursor-pointer"
           >
-            {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4" />}
+            {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-[#74455d]" />}
           </button>
         </div>
       </div>

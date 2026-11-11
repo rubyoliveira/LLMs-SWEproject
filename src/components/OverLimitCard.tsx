@@ -35,14 +35,13 @@ export const OverLimitCard: React.FC<OverLimitCardProps> = ({
 
       {/* Description */}
       <p className="text-xs text-[#525252] dark:text-[#a3a3a3] leading-relaxed mb-5">
-        A ${data.cost} flight is ${data.overAmount} over your ${data.cardLimit} limit, so your Starter
-        Card would decline it. You have no other card to use.
+        A ${data.cost} {data.item || 'purchase'} is ${data.overAmount} over your ${data.cardLimit} limit, so your {data.cardName || 'Starter Card'} would decline it. You have no other card to use.
       </p>
 
       {/* Metrics breakdown */}
       <div className="space-y-2 mb-5 pt-3 border-t border-[#f0ece7] dark:border-[#2b292c] text-xs">
         <div className="flex items-center justify-between">
-          <span className="text-[#666666] dark:text-[#999999]">Starter Card limit</span>
+          <span className="text-[#666666] dark:text-[#999999]">{data.cardName || 'Starter Card'} limit</span>
           <span className="font-medium text-[#191919] dark:text-white">${data.cardLimit}</span>
         </div>
 
@@ -81,8 +80,8 @@ export const OverLimitCard: React.FC<OverLimitCardProps> = ({
 
         {showMath && (
           <div className="mt-2.5 p-2.5 bg-[#fbfaf8] dark:bg-[#28262a] rounded-lg text-[11px] text-[#525252] dark:text-[#a3a3a3] space-y-1">
-            <p>• Card maximum limit: ${data.cardLimit}.00</p>
-            <p>• Flight ticket cost: ${data.cost}.00 (deficit: -${data.overAmount}.00)</p>
+            <p>• {data.cardName || 'Starter Card'} limit: ${data.cardLimit}.00</p>
+            <p>• {data.item ? data.item.charAt(0).toUpperCase() + data.item.slice(1) : 'Purchase'} cost: ${data.cost}.00 (deficit: -${data.overAmount}.00)</p>
             <p>• Recommended credit bureau reporting ratio: &lt;10% (${(data.cardLimit * 0.1).toFixed(0)})</p>
             <p>• Recommendation: Book via checking debit directly or pay down balance first.</p>
           </div>
@@ -96,7 +95,7 @@ export const OverLimitCard: React.FC<OverLimitCardProps> = ({
           onClick={onCheckSmaller}
           className="flex items-center justify-center py-2.5 px-4 rounded-lg font-medium text-xs bg-[#74455d] hover:bg-[#61364d] text-white dark:bg-[#c98bb1] dark:hover:bg-[#d8a1c3] dark:text-[#181517] transition-colors cursor-pointer"
         >
-          Check a smaller amount
+          Check another amount
         </button>
 
         <button

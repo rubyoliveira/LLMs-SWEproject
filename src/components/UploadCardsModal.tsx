@@ -21,6 +21,7 @@ interface UploadCardsModalProps {
   activeCardIds: string[];
   onToggleActiveCard: (cardId: string) => void;
   customApiKey?: string;
+  onOpenAddCustomCard?: () => void;
 }
 
 const CATALOG_PRESETS: Partial<CreditCard>[] = [
@@ -105,6 +106,7 @@ export const UploadCardsModal: React.FC<UploadCardsModalProps> = ({
   activeCardIds,
   onToggleActiveCard,
   customApiKey,
+  onOpenAddCustomCard,
 }) => {
   const [tab, setTab] = useState<'manage' | 'upload' | 'catalog'>('manage');
   const [pastedText, setPastedText] = useState('');
@@ -482,14 +484,29 @@ Amex Gold •• 4011, Limit $12,000, $10 dining credit"
         )}
 
         {/* Footer */}
-        <div className="flex items-center justify-between pt-3 border-t border-[#f0ece7] dark:border-[#2c2a2d] mt-3 shrink-0">
-          <span className="text-[11px] text-[#737373] dark:text-[#9e9e9e]">
-            {activeCardIds.length} of {cards.length} cards active
-          </span>
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-2 pt-3 border-t border-[#f0ece7] dark:border-[#2c2a2d] mt-3 shrink-0">
+          <div className="flex items-center gap-2">
+            {onOpenAddCustomCard && (
+              <button
+                type="button"
+                onClick={() => {
+                  onClose();
+                  onOpenAddCustomCard();
+                }}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-[#f0ebe6] hover:bg-[#e6e0d9] dark:bg-[#28262a] dark:hover:bg-[#323035] text-[#191919] dark:text-white transition-colors cursor-pointer"
+              >
+                <Plus className="w-3.5 h-3.5 text-[#74455d] dark:text-[#c98bb1]" />
+                <span>+ Enter Card Details (Number & CVV)</span>
+              </button>
+            )}
+            <span className="text-[11px] text-[#737373] dark:text-[#9e9e9e]">
+              {activeCardIds.length} of {cards.length} cards active
+            </span>
+          </div>
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 rounded-lg text-xs font-medium bg-[#74455d] hover:bg-[#61364d] text-white dark:bg-[#c98bb1] dark:hover:bg-[#d8a1c3] dark:text-[#181517] transition-colors cursor-pointer"
+            className="w-full sm:w-auto px-4 py-2 rounded-lg text-xs font-medium bg-[#74455d] hover:bg-[#61364d] text-white dark:bg-[#c98bb1] dark:hover:bg-[#d8a1c3] dark:text-[#181517] transition-colors cursor-pointer"
           >
             Apply & Done
           </button>

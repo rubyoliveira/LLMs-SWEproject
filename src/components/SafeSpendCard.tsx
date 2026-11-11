@@ -21,7 +21,7 @@ export const SafeSpendCard: React.FC<SafeSpendCardProps> = ({
           <ShieldCheck className="w-3.5 h-3.5" />
           Safe to buy
         </span>
-        <span className="text-[#737373] dark:text-[#9e9e9e] font-medium">Starter Card</span>
+        <span className="text-[#737373] dark:text-[#9e9e9e] font-medium">{data.cardName || 'Starter Card'}</span>
       </div>
 
       {/* Main headline in Notion Sans */}
@@ -31,9 +31,9 @@ export const SafeSpendCard: React.FC<SafeSpendCardProps> = ({
 
       {/* Context explanation */}
       <p className="text-xs text-[#525252] dark:text-[#a3a3a3] leading-relaxed mb-5">
-        The headphones cost ${data.cost} and your Starter Card has a ${data.cardLimit} limit. If you
-        pay ${data.scheduledPayment} before your statement closes on {data.statementClosesDate}, you
-        will only owe ${data.reportedBalance} when it is reported.
+        The {data.item || 'purchase'} costs <strong className="text-[#191919] dark:text-white">${data.cost}</strong> and your {data.cardName || 'Starter Card'} has a <strong className="text-[#191919] dark:text-white">${data.cardLimit}</strong> limit. If you
+        pay <strong className="text-emerald-700 dark:text-emerald-400">${data.scheduledPayment}</strong> before your statement closes on {data.statementClosesDate}, you
+        will only owe <strong className="text-[#191919] dark:text-white">${data.reportedBalance}</strong> (under 10% utilization) when reported to credit bureaus.
       </p>
 
       {/* Limit used section */}

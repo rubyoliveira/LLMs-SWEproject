@@ -112,10 +112,11 @@ export const LeftRail: React.FC<LeftRailProps> = ({
         <button
           type="button"
           onClick={onToggleTheme}
-          title="Toggle light / dark mode"
+          title={isDark ? 'Switch to Light mode' : 'Switch to Dark mode'}
+          aria-label={isDark ? 'Switch to Light mode' : 'Switch to Dark mode'}
           className="w-10 h-10 rounded-xl flex items-center justify-center text-[#737373] dark:text-[#9e9e9e] hover:bg-[#f0ece7] dark:hover:bg-[#28262a] hover:text-[#191919] dark:hover:text-white transition-colors cursor-pointer"
         >
-          {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4" />}
+          {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-[#74455d]" />}
         </button>
       </div>
     </aside>

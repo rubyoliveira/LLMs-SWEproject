@@ -28,6 +28,28 @@ export interface CreditCard {
     daysLeft: number;
     category: string;
   }[];
+  isPlaidConnected?: boolean;
+  institutionId?: string;
+  institutionName?: string;
+  lastSyncedAt?: string;
+}
+
+export interface PlaidInstitution {
+  id: string;
+  name: string;
+  logo: string;
+  primaryColor: string;
+  cardCount: number;
+  popularCards: string[];
+  description: string;
+}
+
+export interface PlaidSyncResult {
+  success: boolean;
+  message: string;
+  syncedCardsCount: number;
+  timestamp: string;
+  cards: CreditCard[];
 }
 
 export interface SpendingCategory {
@@ -135,6 +157,8 @@ export interface SafeSpendDetails {
   checkingAfter: number;
   payByDate: string;
   statementClosesDate: string;
+  userPrompt?: string;
+  cardName?: string;
 }
 
 export interface OverLimitDetails {
@@ -145,4 +169,6 @@ export interface OverLimitDetails {
   checkingBalance: number;
   checkingAfter: number;
   safeLimitText: string;
+  userPrompt?: string;
+  cardName?: string;
 }

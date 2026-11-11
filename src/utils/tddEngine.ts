@@ -265,6 +265,39 @@ export function resolveMerchantMcc(merchantName: string): MccResolutionResult {
     };
   }
 
+  // Airlines & Air Carriers
+  if (
+    norm.includes('delta') ||
+    norm.includes('united') ||
+    norm.includes('american airline') ||
+    norm.includes('southwest') ||
+    norm.includes('jetblue') ||
+    norm.includes('alaska airline')
+  ) {
+    return {
+      merchant: merchantName,
+      mcc: '4511',
+      category: 'Flights & Travel',
+      isSupermarketEligible: false,
+      isWholesaleClub: false,
+      isDining: false,
+      isNonCategory: false,
+    };
+  }
+
+  // Rideshare & Taxis
+  if (norm.includes('uber') || norm.includes('lyft') || norm.includes('taxi')) {
+    return {
+      merchant: merchantName,
+      mcc: '4121',
+      category: 'Rideshare & Transit',
+      isSupermarketEligible: false,
+      isWholesaleClub: false,
+      isDining: false,
+      isNonCategory: false,
+    };
+  }
+
   // Non-Category / Donations
   if (
     norm.includes('church') ||

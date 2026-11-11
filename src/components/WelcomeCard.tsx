@@ -118,24 +118,16 @@ export const WelcomeCard: React.FC<WelcomeCardProps> = ({
       {firstCredit && (
         <div className="flex items-center justify-between p-3 rounded-xl bg-[#faf5f0] dark:bg-[#252024] border border-[#eedfd0] dark:border-[#3d2f38] text-xs">
           <div className="flex items-center gap-2.5">
-            <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0 animate-ping" />
+            <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0" />
             <div>
               <span className="font-semibold text-[#8f4f1f] dark:text-[#e09867]">
                 Expiring Credit Alert:
               </span>{' '}
               <span className="text-[#6c4021] dark:text-[#d1b399]">
-                ${firstCredit.remaining} dining credit ends in {firstCredit.daysLeft} days.
+                ${firstCredit.remaining} {firstCredit.category.toLowerCase()} credit ends in {firstCredit.daysLeft} days. Ask which card for any {firstCredit.category.toLowerCase()} to use it.
               </span>
             </div>
           </div>
-          <button
-            type="button"
-            onClick={() => onSelectPrompt('Ordering lunch at Shake Shack for $24. Which card should I swipe?')}
-            className="text-[11px] font-semibold text-[#74455d] dark:text-[#c98bb1] hover:underline shrink-0 ml-2 cursor-pointer flex items-center gap-1"
-          >
-            <span>Use it now</span>
-            <ArrowRight className="w-3 h-3" />
-          </button>
         </div>
       )}
 
@@ -183,93 +175,40 @@ export const WelcomeCard: React.FC<WelcomeCardProps> = ({
         </div>
       </div>
 
-      {/* Quick Prompts to Try */}
-      <div>
-        <div className="flex items-center gap-1.5 text-xs font-semibold text-[#525252] dark:text-[#b3b3b3] uppercase tracking-wider text-[11px] mb-2.5">
+      {/* Copilot Core Capabilities Overview */}
+      <div className="space-y-3">
+        <div className="flex items-center gap-1.5 text-xs font-semibold text-[#525252] dark:text-[#b3b3b3] uppercase tracking-wider text-[11px]">
           <Compass className="w-3.5 h-3.5 text-[#74455d] dark:text-[#c98bb1]" />
-          <span>Ask RocketRewards Anything</span>
+          <span>How Your Copilot Evaluates Every Purchase</span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-          <button
-            type="button"
-            onClick={() => onSelectPrompt('Lunch at Burger King for $14')}
-            className="flex items-center justify-between p-3 rounded-xl bg-[#faf9f7] dark:bg-[#252427] border border-[#ece7e1] dark:border-[#2f2e32] hover:border-[#74455d] dark:hover:border-[#c98bb1] text-left transition-all cursor-pointer group shadow-2xs"
-          >
-            <div>
-              <div className="font-semibold text-[#191919] dark:text-white group-hover:text-[#74455d] dark:group-hover:text-[#c98bb1] flex items-center gap-1.5">
-                <span>🍔 Lunch at Burger King for $14</span>
-              </div>
-              <p className="text-[11px] text-[#737373] dark:text-[#9e9e9e] mt-0.5">
-                Identifies 4x dining multiplier on Amex Gold
-              </p>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
+          <div className="p-3.5 rounded-xl bg-[#faf9f7] dark:bg-[#252427] border border-[#ece7e1] dark:border-[#2f2e32]">
+            <div className="font-semibold text-[#191919] dark:text-white mb-1 flex items-center gap-1.5">
+              <span>💳 Real-Time Card Optimizer</span>
             </div>
-            <ArrowRight className="w-3.5 h-3.5 text-[#a3a3a3] group-hover:text-[#74455d] dark:group-hover:text-[#c98bb1] shrink-0 ml-2 transition-transform group-hover:translate-x-0.5" />
-          </button>
+            <p className="text-[11.5px] text-[#737373] dark:text-[#9e9e9e] leading-relaxed">
+              Compares bonus multipliers across all your enrolled cards, calculating point valuations and factoring in statement credits.
+            </p>
+          </div>
 
-          <button
-            type="button"
-            onClick={() => onSelectScenario('shake-shack')}
-            className="flex items-center justify-between p-3 rounded-xl bg-[#faf9f7] dark:bg-[#252427] border border-[#ece7e1] dark:border-[#2f2e32] hover:border-[#74455d] dark:hover:border-[#c98bb1] text-left transition-all cursor-pointer group shadow-2xs"
-          >
-            <div>
-              <div className="font-semibold text-[#191919] dark:text-white group-hover:text-[#74455d] dark:group-hover:text-[#c98bb1] flex items-center gap-1.5">
-                <span>🥤 Shake Shack for $24</span>
-              </div>
-              <p className="text-[11px] text-[#737373] dark:text-[#9e9e9e] mt-0.5">
-                Applies $10 expiring credit → $14 net charge
-              </p>
+          <div className="p-3.5 rounded-xl bg-[#faf9f7] dark:bg-[#252427] border border-[#ece7e1] dark:border-[#2f2e32]">
+            <div className="font-semibold text-[#191919] dark:text-white mb-1 flex items-center gap-1.5">
+              <span>🛡️ Safe Spend & Credit Health</span>
             </div>
-            <ArrowRight className="w-3.5 h-3.5 text-[#a3a3a3] group-hover:text-[#74455d] dark:group-hover:text-[#c98bb1] shrink-0 ml-2 transition-transform group-hover:translate-x-0.5" />
-          </button>
+            <p className="text-[11.5px] text-[#737373] dark:text-[#9e9e9e] leading-relaxed">
+              Guards against card limits, prevents declines, and calculates payments before your statement closes to keep utilization under 10%.
+            </p>
+          </div>
 
-          <button
-            type="button"
-            onClick={() => onSelectScenario('headphones-starter')}
-            className="flex items-center justify-between p-3 rounded-xl bg-[#faf9f7] dark:bg-[#252427] border border-[#ece7e1] dark:border-[#2f2e32] hover:border-[#74455d] dark:hover:border-[#c98bb1] text-left transition-all cursor-pointer group shadow-2xs"
-          >
-            <div>
-              <div className="font-semibold text-[#191919] dark:text-white group-hover:text-[#74455d] dark:group-hover:text-[#c98bb1] flex items-center gap-1.5">
-                <span>🎧 Can I buy $180 headphones?</span>
-              </div>
-              <p className="text-[11px] text-[#737373] dark:text-[#9e9e9e] mt-0.5">
-                Safe-spend guardrail with scheduled payment
-              </p>
+          <div className="p-3.5 rounded-xl bg-[#faf9f7] dark:bg-[#252427] border border-[#ece7e1] dark:border-[#2f2e32]">
+            <div className="font-semibold text-[#191919] dark:text-white mb-1 flex items-center gap-1.5">
+              <span>🏷️ ISO 18245 MCC Engine</span>
             </div>
-            <ArrowRight className="w-3.5 h-3.5 text-[#a3a3a3] group-hover:text-[#74455d] dark:group-hover:text-[#c98bb1] shrink-0 ml-2 transition-transform group-hover:translate-x-0.5" />
-          </button>
-
-          <button
-            type="button"
-            onClick={() => onSelectPrompt('Groceries at Whole Foods for $85')}
-            className="flex items-center justify-between p-3 rounded-xl bg-[#faf9f7] dark:bg-[#252427] border border-[#ece7e1] dark:border-[#2f2e32] hover:border-[#74455d] dark:hover:border-[#c98bb1] text-left transition-all cursor-pointer group shadow-2xs"
-          >
-            <div>
-              <div className="font-semibold text-[#191919] dark:text-white group-hover:text-[#74455d] dark:group-hover:text-[#c98bb1] flex items-center gap-1.5">
-                <span>🛒 Whole Foods Groceries for $85</span>
-              </div>
-              <p className="text-[11px] text-[#737373] dark:text-[#9e9e9e] mt-0.5">
-                Supermarket MCC 5411 evaluation
-              </p>
-            </div>
-            <ArrowRight className="w-3.5 h-3.5 text-[#a3a3a3] group-hover:text-[#74455d] dark:group-hover:text-[#c98bb1] shrink-0 ml-2 transition-transform group-hover:translate-x-0.5" />
-          </button>
-
-          <button
-            type="button"
-            onClick={() => onSelectPrompt('Donating $50 to church')}
-            className="flex items-center justify-between p-3 rounded-xl bg-[#faf9f7] dark:bg-[#252427] border border-[#ece7e1] dark:border-[#2f2e32] hover:border-[#74455d] dark:hover:border-[#c98bb1] text-left transition-all cursor-pointer group shadow-2xs"
-          >
-            <div>
-              <div className="font-semibold text-[#191919] dark:text-white group-hover:text-[#74455d] dark:group-hover:text-[#c98bb1] flex items-center gap-1.5">
-                <span>⛪ Donating $50 to church</span>
-              </div>
-              <p className="text-[11px] text-[#737373] dark:text-[#9e9e9e] mt-0.5">
-                Non-category purchase → "Use any card"
-              </p>
-            </div>
-            <ArrowRight className="w-3.5 h-3.5 text-[#a3a3a3] group-hover:text-[#74455d] dark:group-hover:text-[#c98bb1] shrink-0 ml-2 transition-transform group-hover:translate-x-0.5" />
-          </button>
+            <p className="text-[11.5px] text-[#737373] dark:text-[#9e9e9e] leading-relaxed">
+              Automatically maps merchant names to exact credit card processing category codes to verify bonus eligibility.
+            </p>
+          </div>
         </div>
       </div>
 
